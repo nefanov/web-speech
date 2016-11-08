@@ -1,17 +1,23 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>Speech recognizer</title>
-    <script src="//yandex.st/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
-    <script src="https://webasr.yandex.net/jsapi/v1/webspeechkit.js" type="text/javascript"></script>
-    <script src="https://webasr.yandex.net/jsapi/v1/webspeechkit-settings.js" type="text/javascript"></script>
-    <script src="line.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="../css/textline.css"/>
-</head>
-<body>
-    <div id="rec_line"></div>
-    <input type="button" id="get_value" value="Получить результат распознавания"/>
-    <input type="button" id="destroy" value="Удалить поле"/>
-</body>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Пример использования класса SpeechRecognition.</title>
+        <script src="https://yandex.st/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
+        <script src="https://webasr.yandex.net/jsapi/v1/webspeechkit.js" type="text/javascript"></script>
+        <script src="https://webasr.yandex.net/jsapi/v1/webspeechkit-settings.js" type="text/javascript"></script>
+        <script src="streamer.js" type="text/javascript"></script>
+    </head>
+
+    <body>
+    <input type="button" name="_id" id="_id" value="Начать диктовку записи">
+    <input type="button" name="pause" id="pause" disabled value="Приостановить диктовку">
+    <input type="button" name="stop" id="stop" disabled value="Остановить диктовку">
+
+    <div class="textarea">
+        <form action="#">
+            <textarea id="text_field" rows="10" cols="55"></textarea>
+        </form>
+    </div>
+    </body>
 </html>
