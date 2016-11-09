@@ -1,49 +1,57 @@
-var streamer = new ya.speechkit.SpeechRecognition();
-window.ya.speechkit.settings.apikey = 'dc3e634b-1e90-40e7-9e6a-2341735aa8e3';
-//Будем запускать процесс распознавания при нажатии на кнопку.
 
-$('_id').bind('click', function () {
-  alert('Вы нажали на элемент "foo"');
-  streamer.start({
-    // initCallback вызывается после успешной инициализации сессии.
-    initCallback: function () {
-        console.log("Началась запись звука.");
-    },
-    // Данная функция вызывается многократно.
-    // Ей передаются промежуточные результаты распознавания.
-    // После остановки распознавания этой функции
-    // будет передан финальный результат.
-    dataCallback: function (text, done, merge, words, biometry) {
-      console.log("Распознанный текст: " + text);
-      console.log("Является ли результат финальным:" + done);
-      console.log("Число обработанных запросов, по которым выдан ответ от сервера: " + merge);
-      console.log("Подробная информация о распознанных фрагметах: " + words);
-      // Подробнее о массиве biometry см. в разделе Анализ речи.
-      $.each(biometry, function (j, bio) {
-        console.log("Характеристика: " + bio.tag + " Вариант: " + bio.class +
-        " Вероятность: " + bio.confidence.toFixed(3));
-      });
-    },
-    // Вызывается при возникновении ошибки (например, если передан неверный API-ключ).
-    errorCallback: function (err) {
-        console.log("Возникла ошибка: " + err);
-    },
-    // Содержит сведения о ходе процесса распознавания.
-    infoCallback: function (sent_bytes, sent_packages, processed, format) {
-        console.log("Отправлено данных на сервер: " + sent_bytes);
-        console.log("Отправлено пакетов на сервер: " + sent_packages);
-        console.log("Количество пакетов, которые обработал сервер: " + processed);
-        console.log("До какой частоты понижена частота дискретизации звука: " + format);
-    },
-    // Будет вызвана после остановки распознавания.
-    stopCallback: function () {
-        console.log("Запись звука прекращена.");
-    },
-    // Возвращать ли промежуточные результаты.
-    particialResults: true,
-    // Длительность промежутка тишины (в сантисекундах),
-    // при наступлении которой API начнет преобразование
-    // промежуточных результатов в финальный текст.
-    utteranceSilence: 60
-  });
-});
+window.onload = function () {
+//    window.ya.speechkit.settings.apikey = 'efe49eed-0ce0-4482-8c14-0cf141204bd9';
+window.ya.speechkit.settings.apikey = 'dc3e634b-1e90-40e7-9e6a-2341735aa8e3';
+
+    var recognition = new ya.speechkit.SpeechRecognition();
+
+    $('#rec_start').bind('click', function () {
+        recognition.start({
+            initCallback: function () {
+                $('#text_field').html(' ');
+                console.log('Началась запись звука.');
+            },
+            dataCallback: function (text, done, merge, words, biometry) {
+                if (done) {
+                    console.log("Анализ речи: ");
+                    $.each(biometry, function (j, bio) {
+                        console.log(" Характеристика: " + bio.tag + " Вариант: " + bio.class +
+                        " Вероятность: " + bio.confidence.toFixed(3));
+                    });
+                    $('#text_field').append(text);
+                    $('#text_field').append('\n');
+                    /* Do smth more with the text */
+                }
+            },
+            errorCallback: function (err) {
+                console.log('Возникла ошибка ' + err);
+            },
+            stopCallback: function () {
+                console.log('Запись звука остановлена.');
+            },
+            utteranceSilence: 60,
+            punctuation: true,
+            model: 'notes',
+            biometry: 'gender, group, language'
+
+        });
+        $('#rec_start').prop('disabled', true);
+        $('#rec_pause').prop('disabled', false);
+        $('#rec_stop').prop('disabled', false);
+    });
+
+    $('#rec_pause').bind('click', function () {
+        recognition.pause();
+        $('#rec_start').prop('disabled', false);
+        $('#rec_pause').prop('disabled', true);
+        $('#rec_start').val('Возобновить диктовку записи');
+    });
+
+    $('#rec_stop').bind('click', function () {
+        recognition.stop();
+        $('#rec_start').val('Начать диктовку записи');
+        $('#rec_start').prop('disabled', false);
+        $('#rec_pause').prop('disabled', true);
+        $('#rec_stop').prop('disabled', true);
+    });
+}
